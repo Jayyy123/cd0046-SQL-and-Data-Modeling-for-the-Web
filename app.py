@@ -478,6 +478,59 @@ def delete_venue(venue_id):
   # clicking that button delete it from the db then redirect the user to the homepage
   return redirect(url_for('index'))
 
+#  General Search
+#  --------------------------------------------------------------
+@app.route('/region')
+def region():
+
+  new_data = []
+
+  return render_template('pages/artists.html', artists=new_data)
+
+
+
+@app.route('/region/search', methods=['POST'])
+def region_search():
+  results = []
+  res = []
+  item = request.form.get('search_term', '')
+  print('come on')
+  # venues.append(Venue.query.filter(Venue.name==f'{item}').first())
+  # results.append(Artist.query.filter(Artist.city.ilike(f'%{item}')).all())
+  results.append(Artist.query.filter(Artist.city.ilike(f'%{item}%')).all())
+  # results.append(Artist.query.filter(Artist.city.ilike(f'{item}%')).all())
+  # results.append(Venue.query.filter(Venue.city.ilike(f'%{item}')).all())
+  results.append(Venue.query.filter(Venue.city.ilike(f'%{item}%')).all())
+  # results.append(Venue.query.filter(Venue.city.ilike(f'{item}%')).first())
+  # results.append(Artist.query.filter(Artist.state.ilike(f'%{item}')).first())
+  # results.append(Artist.query.filter(Artist.state.ilike(f'%{item}%')).first())
+  # results.append(Artist.query.filter(Artist.state.ilike(f'{item}%')).first())
+  # results.append(Venue.query.filter(Artist.state.ilike(f'%{item}')).first())
+  # results.append(Venue.query.filter(Artist.state.ilike(f'%{item}%')).first())
+  # results.append(Venue.query.filter(Artist.state.ilike(f'{item}%')).first())
+
+  print(results)
+
+  for i in results:
+    for a in i:
+      res.append(a)
+  print(res)
+
+  # for i in results:
+  #   if i== None:
+  #     res.remove(i)
+
+  response = {
+      "artist": False,
+      "count": len(res),
+      "data":res
+  }
+
+  print(results)
+
+  return render_template('pages/search_artists.html', results=response, search_term=request.form.get('search_term', ''))
+
+
 #  Artists
 #  ----------------------------------------------------------------
 @app.route('/artists')
@@ -522,7 +575,8 @@ def search_artists():
       artists.remove(i)
 
   artist_response = {
-      "count": 1,
+      "artist": True,
+      "count": len(artists),
       "data":artists
   }
 
